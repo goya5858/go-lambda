@@ -2,6 +2,8 @@ package main
 
 import (
 	"myModule/myPackage" //myModule(モジュール名)のmyPackage(パッケージ名)を使用する
+
+	"github.com/aws/aws-lambda-go/lambda"
 )
 
 func executeFunction() {
@@ -9,6 +11,6 @@ func executeFunction() {
 }
 
 func main() {
-	//lambda.Start(executeFunction)
-	executeFunction()
+	lambda.Start(executeFunction)
+	//executeFunction()
 }
