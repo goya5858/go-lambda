@@ -4,7 +4,7 @@ FROM public.ecr.aws/lambda/provided:al2 as build
 RUN yum install -y golang
 RUN go env -w GOPROXY=direct
 
-ADD ./TestLambda/ ./
+ADD ./myModule/ ./
 RUN go mod download
 # handler.goをmainという名称のファイルにコンパイル
 RUN go build -o /main handler.go
