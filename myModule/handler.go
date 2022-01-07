@@ -23,23 +23,21 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) erro
 	fmt.Println(apiRequest)
 	fmt.Println("allBody", apiRequest.Body)
 
-	arr := splitBody(apiRequest.Body)
+	arr := splitBody(apiRequest.Body, ",")
 	fmt.Println("content Body:", arr[2])
-	//base64IMG := arr[2]
-	//request, DecodeErr := base64.StdEncoding.DecodeString(base64IMG)
-	//if DecodeErr != nil {
-	//	return DecodeErr
-	//}
+
 	request, convertErr := converter.NewFileUploaderImpl().Exec(apiRequest.Body)
 	if convertErr != nil {
 		return convertErr
 	}
-	fmt.Println("DeocdeToBytesData:", request)
+	imgAndTag := request.Text
+	base64img := splitBody(imgAndTag, ";")[1]
+	fmt.Println("DeocdeToBytesData:", base64img)
 	return nil
 }
 
-func splitBody(strbody string) []string {
-	return strings.Split(strbody, ",")
+func splitBody(strbody string, splits string) []string {
+	return strings.Split(strbody, splits)
 }
 
 func main() {
