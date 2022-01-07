@@ -14,26 +14,20 @@ import (
 	//myModule(モジュール名)のmyPackage(パッケージ名)を使用する
 )
 
-type Header struct {
-	Access_Control_Allow_Headers string
-	Access_Control_Allow_Origin  string
-	Access_Control_Allow_Methods string
-	Content_Type                 string
-}
-type Base_return struct {
-	statusCode      int
-	headers         Header
-	body            string
-	isBase64Encoded bool
-}
-
 func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
+	var header map[string]string
+	header["Access-Control-Allow-Headers"] = "Content-Type"
+	header["Access-Control-Allow-Origin"] = "*"
+	header["Access-Control-Allow-Methods"] = "OPTIONS,POST,GET"
+	header["Content-Type"] = "image/*"
+
 	fmt.Println("allBody", apiRequest.Body)
 	request, convertErr := converter.NewFileUploaderImpl().Exec(apiRequest.Body)
 	if convertErr != nil {
 		fmt.Println(convertErr)
 		res := events.APIGatewayProxyResponse{
 			StatusCode:      500,
+			Headers:         header,
 			Body:            "",
 			IsBase64Encoded: true,
 		}
@@ -54,6 +48,7 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) even
 	ango := base64.StdEncoding.EncodeToString(byte_data)
 	res := events.APIGatewayProxyResponse{
 		StatusCode:      200,
+		Headers:         header,
 		Body:            ango,
 		IsBase64Encoded: true,
 	}
