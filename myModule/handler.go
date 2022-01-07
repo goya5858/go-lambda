@@ -42,7 +42,9 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) (eve
 	fmt.Println("OpenFile")
 	defer file.Close()
 	fi, _ := file.Stat() //FileInfo interface
-	size := fi.Size()    //ファイルサイズ
+	fmt.Println("fi, _ := file.Stat()")
+	size := fi.Size() //ファイルサイズ
+	fmt.Println("size := fi.Size()    //ファイルサイズ")
 	fmt.Println("Before read")
 	byte_data := make([]byte, size)
 	fmt.Println("After read")
