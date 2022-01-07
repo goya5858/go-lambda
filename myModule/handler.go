@@ -34,7 +34,7 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) (eve
 		return res, convertErr
 	}
 
-	filepath := "encode_and_decord.jpg"
+	filepath := "/tmp/encode_and_decord.jpg"
 	data := base64toIMG.ReqJsonToImg(request, filepath)
 	fmt.Println("ByteFile:", data)
 
