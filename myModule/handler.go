@@ -11,12 +11,21 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
+/*
+apiRequest.Body
+{
+    "line_count": null,
+    "text": "data:image/png;base64,<Base64でエンコードされた画像>
+}
+の形式で渡される
+*/
 func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) error {
-	request, convertErr := converter.NewFileUploaderImpl().Exec(apiRequest.Body)
 	fmt.Println(apiRequest)
 	fmt.Println("allBody", apiRequest.Body)
 	arr := splitBody(apiRequest.Body)
-	fmt.Println("content Body:", arr[1])
+	fmt.Println("content Body:", arr[2])
+
+	request, convertErr := converter.NewFileUploaderImpl().Exec(arr[2])
 	if convertErr != nil {
 		return convertErr
 	}
