@@ -15,11 +15,12 @@ import (
 )
 
 func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	header := map[string]string{} //ちゃんとMAPを初期化
-	header["Access-Control-Allow-Headers"] = "Content-Type"
-	header["Access-Control-Allow-Origin"] = "*"
-	header["Access-Control-Allow-Methods"] = "OPTIONS,POST,GET"
-	header["Content-Type"] = "image/*"
+	var header map[string]string = map[string]string{
+		"Access-Control-Allow-Headers": "Content-Type",
+		"Access-Control-Allow-Origin":  "*",
+		"Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+		"Content-Type":                 "image/*",
+	}
 
 	fmt.Println("allBody", apiRequest.Body)
 	request, convertErr := converter.NewFileUploaderImpl().Exec(apiRequest.Body)
@@ -34,7 +35,7 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) (eve
 		return res, convertErr
 	}
 
-	filepath := "/tmp/encode_and_decord.jpg"
+	filepath := "/tmp/encode_and_decord.jpg" // /tmp/以下に保存しないとエラー
 	data := base64toIMG.ReqJsonToImg(request, filepath)
 	fmt.Println("ByteFile:", data)
 
@@ -47,17 +48,14 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) (eve
 		fmt.Println("file.Stat Error: ", err)
 	}
 
-	fmt.Println("Before read")
 	byte_data := make([]byte, fi.Size())
-	fmt.Println("After read")
-
 	file.Read(byte_data)
 	fmt.Println("ReadFile")
-	ango := base64.StdEncoding.EncodeToString(byte_data)
+	base64img := base64.StdEncoding.EncodeToString(byte_data)
 	res := events.APIGatewayProxyResponse{
 		StatusCode:      200,
 		Headers:         header,
-		Body:            ango,
+		Body:            base64img,
 		IsBase64Encoded: true,
 	}
 	return res, nil
