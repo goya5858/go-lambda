@@ -6,9 +6,10 @@ import (
 )
 
 // Request
+// フィールドは大文字から始める
 type Request struct {
-	line_count string // 特に意味のないデータ　複数を扱うための仮のもの
-	text       string //base64でエンコードされたデータ
+	Line_count string // 特に意味のないデータ　複数を扱うための仮のもの
+	Text       string //base64でエンコードされたデータ
 }
 
 type requestConverterImpl struct{}
