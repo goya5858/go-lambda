@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	base64toimg "myModule/base64toIMG"
 	"myModule/converter"
 	"os"
 	"strings"
@@ -13,22 +14,50 @@ import (
 	//myModule(モジュール名)のmyPackage(パッケージ名)を使用する
 )
 
-func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) error {
+type Header struct {
+	Access_Control_Allow_Headers string
+	Access_Control_Allow_Origin  string
+	Access_Control_Allow_Methods string
+	Content_Type                 string
+}
+type Base_return struct {
+	statusCode      int
+	headers         Header
+	body            string
+	isBase64Encoded bool
+}
+
+func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
 	fmt.Println("allBody", apiRequest.Body)
 	request, convertErr := converter.NewFileUploaderImpl().Exec(apiRequest.Body)
 	if convertErr != nil {
-		return convertErr
+		fmt.Println(convertErr)
+		res := events.APIGatewayProxyResponse{
+			StatusCode:      500,
+			Body:            "",
+			IsBase64Encoded: true,
+		}
+		return res
 	}
-	imgAndTag := request.Text                 //Base64になってる画像部分のみを取り出す
-	base64img := splitBody(imgAndTag, ",")[1] // 頭に　data:image/png;base64,　という余計な部分がくっついてるので取り除く
-	fmt.Println("DeocdeToBytesData:", base64img)
 
-	data, _ := base64.StdEncoding.DecodeString(base64img)
-	file, _ := os.Create("encode_and_decord.jpg") // encode_and_decode.jpgという名称のファイルを作成
+	filepath := "encode_and_decord.jpg"
+	data := base64toimg.ReqJsonToImg(request, filepath)
+	fmt.Println(data)
+
+	file, _ := os.Open(filepath)
 	defer file.Close()
-	file.Write(data) //encode_and_decode.jpgに対して、画像のデータを書き込み
+	fi, _ := file.Stat() //FileInfo interface
+	size := fi.Size()    //ファイルサイズ
 
-	return nil
+	byte_data := make([]byte, size)
+	file.Read(byte_data)
+	ango := base64.StdEncoding.EncodeToString(byte_data)
+	res := events.APIGatewayProxyResponse{
+		StatusCode:      200,
+		Body:            ango,
+		IsBase64Encoded: true,
+	}
+	return res
 }
 
 func splitBody(strbody string, splits string) []string {
