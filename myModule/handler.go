@@ -14,7 +14,7 @@ import (
 	//myModule(モジュール名)のmyPackage(パッケージ名)を使用する
 )
 
-func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) events.APIGatewayProxyResponse {
+func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	var header map[string]string
 	header["Access-Control-Allow-Headers"] = "Content-Type"
 	header["Access-Control-Allow-Origin"] = "*"
@@ -31,7 +31,7 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) even
 			Body:            "",
 			IsBase64Encoded: true,
 		}
-		return res
+		return res, convertErr
 	}
 
 	filepath := "encode_and_decord.jpg"
@@ -52,7 +52,7 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) even
 		Body:            ango,
 		IsBase64Encoded: true,
 	}
-	return res
+	return res, nil
 }
 
 func splitBody(strbody string, splits string) []string {
