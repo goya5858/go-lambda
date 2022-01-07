@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	base64toimg "myModule/base64toIMG"
+	"myModule/base64toIMG"
 	"myModule/converter"
 	"os"
 	"strings"
@@ -35,16 +35,18 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) (eve
 	}
 
 	filepath := "encode_and_decord.jpg"
-	data := base64toimg.ReqJsonToImg(request, filepath)
-	fmt.Println(data)
+	data := base64toIMG.ReqJsonToImg(request, filepath)
+	fmt.Println("ByteFile:", data)
 
 	file, _ := os.Open(filepath)
+	fmt.Println("OpenFile")
 	defer file.Close()
 	fi, _ := file.Stat() //FileInfo interface
 	size := fi.Size()    //ファイルサイズ
 
 	byte_data := make([]byte, size)
 	file.Read(byte_data)
+	fmt.Println("ReadFile")
 	ango := base64.StdEncoding.EncodeToString(byte_data)
 	res := events.APIGatewayProxyResponse{
 		StatusCode:      200,
