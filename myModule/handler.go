@@ -41,13 +41,16 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) (eve
 	file, _ := os.Open(filepath)
 	fmt.Println("OpenFile")
 	defer file.Close()
-	fi, _ := file.Stat() //FileInfo interface
-	fmt.Println("fi, _ := file.Stat()")
-	size := fi.Size() //ファイルサイズ
-	fmt.Println("size := fi.Size()    //ファイルサイズ")
+
+	fi, err := file.Stat() //FileInfo interface
+	if err != nil {
+		fmt.Println("file.Stat Error: ", err)
+	}
+
 	fmt.Println("Before read")
-	byte_data := make([]byte, size)
+	byte_data := make([]byte, fi.Size())
 	fmt.Println("After read")
+
 	file.Read(byte_data)
 	fmt.Println("ReadFile")
 	ango := base64.StdEncoding.EncodeToString(byte_data)
