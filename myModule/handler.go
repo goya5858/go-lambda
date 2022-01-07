@@ -12,6 +12,7 @@ import (
 
 func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) error {
 	request, convertErr := converter.NewFileUploaderImpl().Exec(apiRequest.Body)
+	fmt.Println(apiRequest)
 	if convertErr != nil {
 		return convertErr
 	}
