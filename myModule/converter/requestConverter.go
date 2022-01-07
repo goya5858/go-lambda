@@ -1,5 +1,13 @@
 package converter
 
+/* 受け取ったRequest.Bodyを
+ type Request struct {
+	Line_count string // 特に意味のないデータ　複数を扱うための仮のもの
+	Text       string //base64でエンコードされたデータ
+}
+形式に展開して返すコンバーターの設定
+*/
+
 import (
 	"encoding/json"
 	"fmt"
