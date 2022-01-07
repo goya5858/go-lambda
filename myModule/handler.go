@@ -3,27 +3,38 @@ package main
 import (
 	"context"
 	"fmt"
-	"myModule/myPackage" //myModule(モジュール名)のmyPackage(パッケージ名)を使用する
+	"myModule/converter"
 
+	//myModule(モジュール名)のmyPackage(パッケージ名)を使用する
+	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func executeFunction() {
-	myPackage.SayHello() //
+func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) error {
+	request, convertErr := converter.NewFileUploaderImpl().Exec(apiRequest.Body)
+	if convertErr != nil {
+		return convertErr
+	}
+	fmt.Println(request)
+	return nil
 }
 
-type MyEvent struct {
-	Name string `json:name`
-	Age  int
-}
-
-func HandleRequest(ctx context.Context, event MyEvent) (string, error) {
-	fmt.Println("event:", event)
-	return fmt.Sprintf("Hello %s!", event.Name), nil
-}
+//func executeFunction() {
+//	myPackage.SayHello() //
+//}
+//
+//type MyEvent struct {
+//	Name string `json:name`
+//	Age  int
+//}
+//
+//func HandleRequest(ctx context.Context, apiRequest events.APIGatewayProxyRequest) (string, error) {
+//	fmt.Println("event:", apiRequest)
+//	return fmt.Sprintf("Hello %s!", "test"), nil
+//}
 
 func main() {
-	lambda.Start(HandleRequest)
+	lambda.Start(Handler)
 	//lambda.Start(executeFunction)
 	//executeFunction()
 }
