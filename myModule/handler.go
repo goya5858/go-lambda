@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"myModule/base64toIMG"
 	"myModule/converter"
+	"myModule/onnxReference"
 	"os"
 	"strings"
 
@@ -23,6 +24,7 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) (eve
 	}
 
 	fmt.Println("allBody", apiRequest.Body)
+	// apiRequet.Body(String)をJson形式に変換する
 	request, convertErr := converter.NewFileUploaderImpl().Exec(apiRequest.Body)
 	if convertErr != nil {
 		fmt.Println(convertErr)
@@ -35,11 +37,17 @@ func Handler(ctx context.Context, apiRequest events.APIGatewayProxyRequest) (eve
 		return res, convertErr
 	}
 
+	// 送信されたBase64Imageを画像に変換して保存する
 	filepath := "/tmp/encode_and_decord.jpg" // /tmp/以下に保存しないとエラー
+	outfilepath := "/tmp/output.jpg"
 	data := base64toIMG.ReqJsonToImg(request, filepath)
 	fmt.Println("ByteFile:", data)
 
-	file, _ := os.Open(filepath)
+	// 保存されたInputImageを読み込んでONNXモデルの通して、結果を保存する
+	onnxReference.OnnxRef(filepath, outfilepath)
+
+	// 保存されたOutputImageを読み込んで、FrontEndへ返す
+	file, _ := os.Open(outfilepath)
 	fmt.Println("OpenFile")
 	defer file.Close()
 
@@ -67,8 +75,6 @@ func splitBody(strbody string, splits string) []string {
 
 func main() {
 	lambda.Start(Handler)
-	//lambda.Start(executeFunction)
-	//executeFunction()
 }
 
 /*
