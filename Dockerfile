@@ -1,11 +1,12 @@
 # Cache dependencies & build Go file
-FROM public.ecr.aws/lambda/provided:al2 as build
+FROM golang:1.17.6-buster as build
 
-RUN yum install -y golang
 RUN go env -w GOPROXY=direct
-
+ENV GOPATH=
+#GOPATHクリア
 ADD ./myModule/ ./
 RUN go mod download
+
 # handler.goをmainという名称のファイルにコンパイル
 RUN go build -o /main handler.go
 
