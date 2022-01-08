@@ -40,7 +40,7 @@ func OnnxRef(inpath string, outpath string) {
 	backend := gorgonnx.NewGraph()
 	model := onnx.NewModel(backend)
 
-	byte_model, _ := os.ReadFile("../SampleModel.onnx")
+	byte_model, _ := os.ReadFile("./SampleModel.onnx")
 	ReadModelErr := model.UnmarshalBinary(byte_model)
 	if ReadModelErr != nil {
 		fmt.Println(ReadModelErr)

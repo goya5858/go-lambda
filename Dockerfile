@@ -13,6 +13,6 @@ RUN go build -o /main handler.go
 # Copy artifacts to clean image
 FROM public.ecr.aws/lambda/provided:al2
 COPY --from=build /main /main
-COPY  myModule/SampleModel.onnx /SampleModel.onnx
+COPY  myModule/SampleModel.onnx ./SampleModel.onnx
 ENTRYPOINT [ "/main" ]
 
